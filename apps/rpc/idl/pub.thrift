@@ -26,7 +26,7 @@ struct GetResp { // 获取弹幕的响应
 }
 
 struct GetReq { // 获取弹幕的请求
-  1: required string BV
+  1: required i64 BV
 }
 
 // 获取Top1000条

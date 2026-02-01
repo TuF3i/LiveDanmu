@@ -154,7 +154,7 @@ var fieldIDToName_PubReq = map[int16]string{
 type GetResp struct {
 	Status int64       `thrift:"status,1,required" frugal:"1,required,i64" json:"status"`
 	Info   string      `thrift:"info,2,required" frugal:"2,required,string" json:"info"`
-	Data   []*DanmuMsg `thrift:"dao,3,required" frugal:"3,required,list<DanmuMsg>" json:"dao"`
+	Data   []*DanmuMsg `thrift:"data,3,required" frugal:"3,required,list<DanmuMsg>" json:"data"`
 }
 
 func NewGetResp() *GetResp {
@@ -195,11 +195,11 @@ func (p *GetResp) String() string {
 var fieldIDToName_GetResp = map[int16]string{
 	1: "status",
 	2: "info",
-	3: "dao",
+	3: "data",
 }
 
 type GetReq struct {
-	BV string `thrift:"BV,1,required" frugal:"1,required,string" json:"BV"`
+	BV int64 `thrift:"BV,1,required" frugal:"1,required,i64" json:"BV"`
 }
 
 func NewGetReq() *GetReq {
@@ -209,10 +209,10 @@ func NewGetReq() *GetReq {
 func (p *GetReq) InitDefault() {
 }
 
-func (p *GetReq) GetBV() (v string) {
+func (p *GetReq) GetBV() (v int64) {
 	return p.BV
 }
-func (p *GetReq) SetBV(val string) {
+func (p *GetReq) SetBV(val int64) {
 	p.BV = val
 }
 
@@ -230,7 +230,7 @@ var fieldIDToName_GetReq = map[int16]string{
 type GetTopResp struct {
 	Status int64       `thrift:"status,1,required" frugal:"1,required,i64" json:"status"`
 	Info   string      `thrift:"info,2,required" frugal:"2,required,string" json:"info"`
-	Data   []*DanmuMsg `thrift:"dao,3,required" frugal:"3,required,list<DanmuMsg>" json:"dao"`
+	Data   []*DanmuMsg `thrift:"data,3,required" frugal:"3,required,list<DanmuMsg>" json:"data"`
 }
 
 func NewGetTopResp() *GetTopResp {
@@ -271,11 +271,11 @@ func (p *GetTopResp) String() string {
 var fieldIDToName_GetTopResp = map[int16]string{
 	1: "status",
 	2: "info",
-	3: "dao",
+	3: "data",
 }
 
 type GetTopReq struct {
-	BV string `thrift:"BV,1,required" frugal:"1,required,string" json:"BV"`
+	BV int64 `thrift:"BV,1,required" frugal:"1,required,i64" json:"BV"`
 }
 
 func NewGetTopReq() *GetTopReq {
@@ -285,10 +285,10 @@ func NewGetTopReq() *GetTopReq {
 func (p *GetTopReq) InitDefault() {
 }
 
-func (p *GetTopReq) GetBV() (v string) {
+func (p *GetTopReq) GetBV() (v int64) {
 	return p.BV
 }
-func (p *GetTopReq) SetBV(val string) {
+func (p *GetTopReq) SetBV(val int64) {
 	p.BV = val
 }
 

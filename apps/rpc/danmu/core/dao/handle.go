@@ -11,7 +11,7 @@ import (
 func Compare(max int, data []dao.DanmuData) []dao.DanmuData {
 	length := len(data)
 	if length >= max {
-		return data[:999]
+		return data[:max-1]
 	}
 	return data
 }

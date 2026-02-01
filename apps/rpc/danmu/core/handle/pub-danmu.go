@@ -1,4 +1,4 @@
-package service
+package handle
 
 import (
 	"LiveDanmu/apps/public/dto"
@@ -36,7 +36,7 @@ func PubVideoDanmu(ctx context.Context, req *danmusvr.PubReq) dto.Response {
 	return dto.OperationSuccess
 }
 
-func PubLiveDanmu(ctx context.Context, req *danmusvr.PubReq) dto.Response {
+func PubLiveDanmu(ctx context.Context, req *danmusvr.PubLiveReq) dto.Response {
 	// 提取弹幕数据
 	danmuData := req.DanmuMsg
 	// 校验RoomID
