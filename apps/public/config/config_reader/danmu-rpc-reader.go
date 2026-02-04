@@ -22,6 +22,11 @@ func setDefaultForDanmuRpc(v *viper.Viper) {
 	v.SetDefault(config_template.DANMU_RPC_REDIS_NAMESPACE, "dao")
 	v.SetDefault(config_template.DANMU_RPC_REDIS_PASSWORD, "")
 	v.SetDefault(config_template.DANMU_RPC_POD_UID, uuid.New().String())
+	v.SetDefault(config_template.DANMU_RPC_LOKI_NAMESPACE, "middleware")
+	v.SetDefault(config_template.DANMU_RPC_LOKI_SERVICENAME, "loki")
+	v.SetDefault(config_template.DANMU_RPC_LOKI_SERVICE, "DANMU_RPC")
+	v.SetDefault(config_template.DANMU_RPC_LOKI_LEVEL, "INFO")
+	v.SetDefault(config_template.DANMU_RPC_LOKI_ENV, "proc")
 }
 
 func DanmuRpcConfigLoader() (*config_template.DanmuRpcConfig, error) {

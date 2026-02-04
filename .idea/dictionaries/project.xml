@@ -4,6 +4,7 @@
       <w>danmu</w>
       <w>kmsg</w>
       <w>listenaddr</w>
+      <w>mapstructure</w>
       <w>pgdb</w>
       <w>rvid</w>
     </words>

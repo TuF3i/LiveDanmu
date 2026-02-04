@@ -17,8 +17,13 @@ func LoadDanmuGatewayConfig() (*config_template.DanmuGatewayConfig, error) {
 	if err != nil {
 		return nil, err
 	}
-	// 组装配置
 	conf.Etcd.Urls = addrList
+
+	addrList, err = dns_lookup.ServiceDiscovery(conf.Loki.ServiceName, conf.Loki.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	conf.Loki.LokiAddr = addrList
 
 	return conf, nil
 }
@@ -54,6 +59,12 @@ func LoadDanmuRpcConfig() (*config_template.DanmuRpcConfig, error) {
 	}
 	conf.Redis.Urls = addrList
 
+	addrList, err = dns_lookup.ServiceDiscovery(conf.Loki.ServiceName, conf.Loki.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	conf.Loki.LokiAddr = addrList
+
 	return conf, nil
 }
 
@@ -75,6 +86,12 @@ func LoadLiveDanmuConsumerConfig() (*config_template.LiveDanmuConsumerConfig, er
 		return nil, err
 	}
 	conf.PgSQL.Urls = addrList
+
+	addrList, err = dns_lookup.ServiceDiscovery(conf.Loki.ServiceName, conf.Loki.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	conf.Loki.LokiAddr = addrList
 
 	return conf, nil
 }
@@ -103,6 +120,12 @@ func LoadVideoDanmuConsumerConfig() (*config_template.VideoDanmuConsumerConfig, 
 		return nil, err
 	}
 	conf.Redis.Urls = addrList
+
+	addrList, err = dns_lookup.ServiceDiscovery(conf.Loki.ServiceName, conf.Loki.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	conf.Loki.LokiAddr = addrList
 
 	return conf, nil
 }

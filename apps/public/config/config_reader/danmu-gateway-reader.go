@@ -15,6 +15,11 @@ func setDefaultForDanmuGateway(v *viper.Viper) {
 	v.SetDefault(config_template.DANMU_GATEWAY_ETCD_SERVICENAME, "etcd")
 	v.SetDefault(config_template.DANMU_GATEWAY_ETCD_NAMESPACE, "middleware")
 	v.SetDefault(config_template.DANMU_GATEWAY_POD_UID, uuid.New().String())
+	v.SetDefault(config_template.DANMU_GATEWAY_LOKI_NAMESPACE, "middleware")
+	v.SetDefault(config_template.DANMU_GATEWAY_LOKI_SERVICENAME, "loki")
+	v.SetDefault(config_template.DANMU_GATEWAY_LOKI_SERVICE, "DANMU_GATEWAY")
+	v.SetDefault(config_template.DANMU_GATEWAY_LOKI_LEVEL, "INFO")
+	v.SetDefault(config_template.DANMU_GATEWAY_LOKI_ENV, "proc")
 }
 
 func DanmuGatewayConfigLoader() (*config_template.DanmuGatewayConfig, error) {
