@@ -1,6 +1,6 @@
 package dto
 
-import "LiveDanmu/apps/rpc/danmu/kitex_gen/danmusvr"
+import "LiveDanmu/apps/rpc/danmusvr/kitex_gen/danmusvr"
 
 var (
 	OperationSuccess = Response{Status: 20000, Info: "Operation Success"}

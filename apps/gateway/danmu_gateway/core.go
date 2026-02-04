@@ -2,7 +2,6 @@ package danmu_gateway
 
 import (
 	"LiveDanmu/apps/gateway/danmu_gateway/models"
-	"LiveDanmu/apps/rpc/danmu/kitex_gen/pub/pub"
 
 	"github.com/bwmarrin/snowflake"
 	hertzzap "github.com/hertz-contrib/logger/zap"
@@ -18,6 +17,4 @@ var (
 	SnowFlake *snowflake.Node  // 雪花
 )
 
-var (
-	PubSvr pub.Client // 发弹幕微服务
-)
+var ()
