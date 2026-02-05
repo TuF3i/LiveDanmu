@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"LiveDanmu/apps/gateway/danmu_gateway"
+	"LiveDanmu/apps/public/union_var"
 	"context"
 
 	"github.com/bytedance/gopkg/cloud/metainfo"
@@ -10,9 +11,24 @@ import (
 
 func GenTraceID() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
-		// 生成TraceID
-		traceID := danmu_gateway.SnowFlake.Generate().String()
-		ctx = metainfo.WithValue(ctx, danmu_gateway.TRACE_ID_KEY, traceID)
+		// 从请求头里提取TraceID
+		traceID := c.Request.Header.Get(union_var.X_TRACE_ID_HEADER)
+		// TraceID为空就生成
+		if traceID == "" {
+			traceID := danmu_gateway.SnowFlake.Generate().String()
+			// 向MataInfo中写入TraceID
+			ctx = metainfo.WithPersistentValue(ctx, union_var.TRACE_ID_KEY, traceID)
+			// 向Context中写入TraceID
+			ctx = context.WithValue(ctx, union_var.TRACE_ID_KEY, traceID)
+			// 执行后续逻辑
+			c.Next(ctx)
+			return
+		}
+		// 向MataInfo中写入TraceID
+		ctx = metainfo.WithPersistentValue(ctx, union_var.TRACE_ID_KEY, traceID)
+		// 向Context中写入TraceID
+		ctx = context.WithValue(ctx, union_var.TRACE_ID_KEY, traceID)
+		// 执行后续逻辑
 		c.Next(ctx)
 	}
 }

@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"LiveDanmu/apps/public/union_var"
 	"context"
 	"io"
 
@@ -88,14 +89,22 @@ func (l *HertzLokiLogger) ctxSugar(ctx context.Context) *zap.SugaredLogger {
 		return l.sugar
 	}
 
-	// 从 Hertz 的 RequestContext 或其他 context 获取 trace_id
-	traceID, ok := ctx.Value("trace_id").(string)
-	if !ok || traceID == "" {
+	// 闭包函数
+	getTraceIDFromContext := func(ctx context.Context) string {
+		// 从自定义 context value 获取
+		if traceID, ok := ctx.Value(union_var.TRACE_ID_KEY).(string); ok {
+			return traceID
+		}
+
+		return ""
+	}
+
+	traceID := getTraceIDFromContext(ctx)
+	if traceID == "" {
 		return l.sugar
 	}
 
-	// 创建带 trace_id 字段的 sugared logger
-	return l.sugar.With("trace_id", traceID)
+	return l.sugar.With(union_var.TRACE_ID_KEY, traceID)
 }
 
 func (l *HertzLokiLogger) CtxTracef(ctx context.Context, format string, v ...interface{}) {

@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"LiveDanmu/apps/public/union_var"
 	"context"
 	"time"
 
@@ -53,9 +54,19 @@ func (r *LokiGormLogger) Trace(ctx context.Context, begin time.Time, fc func() (
 		return
 	}
 
+	getTraceIDFromContext := func(ctx context.Context) string {
+		// 从自定义 context value 获取
+		if traceID, ok := ctx.Value(union_var.TRACE_ID_KEY).(string); ok {
+			return traceID
+		}
+
+		return ""
+	}
+
 	elapsed := time.Since(begin)
 	sql, rows := fc()
 	fields := []zap.Field{
+		zap.String(union_var.TRACE_ID_KEY, getTraceIDFromContext(ctx)),
 		zap.Duration("elapsed", elapsed),
 		zap.Int64("rows", rows),
 		zap.String("sql", sql),
