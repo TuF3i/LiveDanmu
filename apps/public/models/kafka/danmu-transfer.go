@@ -9,7 +9,6 @@ const (
 )
 
 type DanmuKMsg struct {
-	RVID    int64
-	TraceID string
-	Data    dao.DanmuData
+	RVID int64
+	Data dao.DanmuData
 }

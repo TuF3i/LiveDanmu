@@ -3,6 +3,7 @@ package kafka
 import (
 	"LiveDanmu/apps/consumer/video_danmu_consumer"
 	"LiveDanmu/apps/public/union_var"
+	"LiveDanmu/apps/public/utils"
 	"context"
 
 	kafkaMsg "LiveDanmu/apps/public/models/kafka"
@@ -20,7 +21,7 @@ func process(ctx context.Context, m kafka.Message) error {
 		return err
 	}
 
-	ctx = context.WithValue(ctx, union_var.TRACE_ID_KEY, dataStruct.TraceID)
+	ctx = context.WithValue(ctx, union_var.TRACE_ID_KEY, utils.GetHeaderValue(m, union_var.TRACE_ID_KEY))
 
 	err = video_danmu_consumer.Dao.InsertDanmuIntoDBs(ctx, &dataStruct.Data)
 	if err != nil {

@@ -2,6 +2,7 @@ package kafka_boardcast
 
 import (
 	kafkaMsg "LiveDanmu/apps/public/models/kafka"
+	"LiveDanmu/apps/public/union_var"
 	"context"
 	"strconv"
 
@@ -21,6 +22,7 @@ func (b *BoardCast) SendDanmuMsg(ctx context.Context, data *kafkaMsg.DanmuKMsg) 
 		Value: msg,
 		Headers: []kafka.Header{
 			{Key: "version", Value: []byte("1.0")},
+			{Key: union_var.TRACE_ID_KEY, Value: []byte(ctx.Value(union_var.TRACE_ID_KEY).(string))},
 		},
 	}
 	// 发送消息

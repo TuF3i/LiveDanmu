@@ -4,6 +4,7 @@ import (
 	"LiveDanmu/apps/public/dto"
 	"LiveDanmu/apps/public/models/dao"
 	KMsg "LiveDanmu/apps/public/models/kafka"
+	"LiveDanmu/apps/public/union_var"
 	"LiveDanmu/apps/rpc/danmusvr/kitex_gen/danmusvr"
 	"context"
 	"errors"
@@ -16,8 +17,7 @@ import (
 func (r *KClient) genDanmuKMsg(msg *danmusvr.DanmuMsg) KMsg.DanmuKMsg {
 	// 结构体转换
 	return KMsg.DanmuKMsg{
-		RVID:    msg.RoomId,
-		TraceID: "", //TODO
+		RVID: msg.RoomId,
 		Data: dao.DanmuData{
 			RVID:    msg.RoomId,
 			UserId:  msg.UserId,
@@ -42,6 +42,7 @@ func (r *KClient) produceDanmuKMsg(ctx context.Context, data *danmusvr.DanmuMsg,
 		Value: msg,
 		Headers: []kafka.Header{
 			{Key: "version", Value: []byte("1.0")},
+			{Key: union_var.TRACE_ID_KEY, Value: []byte(ctx.Value(union_var.TRACE_ID_KEY).(string))},
 		},
 	}
 	// 发送消息
