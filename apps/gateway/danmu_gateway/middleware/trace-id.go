@@ -9,7 +9,7 @@ import (
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
-func GenTraceID() app.HandlerFunc {
+func TraceIDMiddleware() app.HandlerFunc {
 	return func(ctx context.Context, c *app.RequestContext) {
 		// 从请求头里提取TraceID
 		traceID := c.Request.Header.Get(union_var.X_TRACE_ID_HEADER)
