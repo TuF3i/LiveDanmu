@@ -13,7 +13,7 @@ import (
 func DanmuPoolReleaseMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 	return func(ctx context.Context, req, resp interface{}) (err error) {
 		// 执行后续业务逻辑
-		_ = next(ctx, req, resp)
+		err = next(ctx, req, resp)
 		// Top型类型断言
 		if dmResp, ok := resp.(*danmusvr.GetTopResp); ok {
 			// 释放内存
@@ -29,7 +29,7 @@ func DanmuPoolReleaseMiddleware(next endpoint.Endpoint) endpoint.Endpoint {
 			}
 		}
 		// 其他直接return nil
-		return nil
+		return err
 	}
 }
 
@@ -43,7 +43,7 @@ func PreInit(next endpoint.Endpoint) endpoint.Endpoint {
 		}
 
 		// 继续执行后续逻辑
-		_ = next(ctx, req, resp)
-		return nil
+		err = next(ctx, req, resp)
+		return err
 	}
 }
