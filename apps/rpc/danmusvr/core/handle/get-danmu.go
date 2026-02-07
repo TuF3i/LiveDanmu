@@ -1,9 +1,9 @@
 package handle
 
 import (
-	"LiveDanmu/apps/public/dto"
 	"LiveDanmu/apps/public/models/dao"
 	"LiveDanmu/apps/rpc/danmusvr/core"
+	"LiveDanmu/apps/rpc/danmusvr/core/dto"
 	"LiveDanmu/apps/rpc/danmusvr/kitex_gen/danmusvr"
 	"context"
 	"errors"

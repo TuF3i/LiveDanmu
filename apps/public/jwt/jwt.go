@@ -5,6 +5,7 @@ import (
 	"LiveDanmu/apps/public/union_var"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -12,7 +13,7 @@ import (
 )
 
 // GenerateAccessToken 生成AccessToken
-func GenerateAccessToken(uid string, role string) (accessToken string, err error) {
+func GenerateAccessToken(uid int64, role string) (accessToken string, err error) {
 	now := time.Now()
 	// AccessToken
 	accessClaims := dao.MainClaims{
@@ -21,7 +22,7 @@ func GenerateAccessToken(uid string, role string) (accessToken string, err error
 		Type: union_var.JWT_TYPE_ACCESS_TOKEN,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    union_var.Issuer,
-			Subject:   uid,
+			Subject:   strconv.FormatInt(uid, 10),
 			Audience:  []string{"user"},
 			ExpiresAt: jwt.NewNumericDate(now.Add(union_var.AccessTTL)),
 			NotBefore: jwt.NewNumericDate(now.Add(-5 * time.Second)), // 时钟偏差
@@ -39,7 +40,7 @@ func GenerateAccessToken(uid string, role string) (accessToken string, err error
 }
 
 // GenerateRefreshToken 生成RefreshToken
-func GenerateRefreshToken(uid string, role string) (refreshToken string, err error) {
+func GenerateRefreshToken(uid int64, role string) (refreshToken string, err error) {
 	now := time.Now()
 	// RefreshToken
 	refreshClaims := dao.MainClaims{
@@ -48,7 +49,7 @@ func GenerateRefreshToken(uid string, role string) (refreshToken string, err err
 		Type: union_var.JWT_TYPE_REFRESH_TOKEN,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    union_var.Issuer,
-			Subject:   uid,
+			Subject:   strconv.FormatInt(uid, 10),
 			Audience:  []string{"user"},
 			ExpiresAt: jwt.NewNumericDate(now.Add(union_var.RefreshTTL)),
 			NotBefore: jwt.NewNumericDate(now.Add(-5 * time.Second)), // 时钟偏差
@@ -70,14 +71,9 @@ func VerifyAccessToken(tokenStr string) (*dao.MainClaims, error) {
 	if tokenStr == "" {
 		return nil, errors.New("token is empty")
 	}
-	// 移除Bearer前缀
-	raw := stripBearer(tokenStr)
-	if raw == "" {
-		return nil, errors.New("token is empty after stripping bearer prefix")
-	}
 	// 解析JWT token
 	token, err := jwt.ParseWithClaims(
-		raw,
+		tokenStr,
 		&dao.MainClaims{},
 		func(t *jwt.Token) (interface{}, error) {
 			// 只接受 HS256 签名方法
@@ -124,14 +120,9 @@ func VerifyRefreshToken(tokenStr string) (*dao.MainClaims, error) {
 	if tokenStr == "" {
 		return nil, errors.New("token is empty")
 	}
-	// 移除Bearer前缀
-	raw := stripBearer(tokenStr)
-	if raw == "" {
-		return nil, errors.New("token is empty after stripping bearer prefix")
-	}
 	// 解析JWT token
 	token, err := jwt.ParseWithClaims(
-		raw,
+		tokenStr,
 		&dao.MainClaims{},
 		func(t *jwt.Token) (interface{}, error) {
 			// 只接受 HS256 签名方法
@@ -173,7 +164,7 @@ func VerifyRefreshToken(tokenStr string) (*dao.MainClaims, error) {
 	return claims, nil
 }
 
-func stripBearer(token string) string {
+func StripBearer(token string) string {
 	if len(token) < 7 {
 		return token
 	}
@@ -185,4 +176,12 @@ func stripBearer(token string) string {
 	}
 
 	return token
+}
+
+func GetAccessTokenExpireTime() time.Duration {
+	return union_var.AccessTTL
+}
+
+func GetRefreshTokenExpireTime() time.Duration {
+	return union_var.RefreshTTL
 }

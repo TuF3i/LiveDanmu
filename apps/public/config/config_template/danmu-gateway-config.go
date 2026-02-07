@@ -4,6 +4,7 @@ type DanmuGatewayConfig struct {
 	PodUID string
 	Hertz  HertzForDanmuGateway
 	Etcd   EtcdForDanmuGateway
+	Redis  RedisForDanmuGateway
 	Loki   LokiConfigForDanmuGateway
 }
 
@@ -11,6 +12,13 @@ type HertzForDanmuGateway struct {
 	ListenAddr     string
 	ListenPort     string
 	MonitoringPort string
+}
+
+type RedisForDanmuGateway struct {
+	Password    string
+	ServiceName string
+	Namespace   string
+	Urls        []string
 }
 
 type EtcdForDanmuGateway struct {

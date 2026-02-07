@@ -1,8 +1,8 @@
 package dao
 
 import (
-	"LiveDanmu/apps/public/dto"
 	publicDao "LiveDanmu/apps/public/models/dao"
+	"LiveDanmu/apps/rpc/danmusvr/core/dto"
 	"context"
 )
 

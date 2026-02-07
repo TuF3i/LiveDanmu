@@ -11,6 +11,7 @@ const (
 	X_TRACE_ID_HEADER      = "X-Trace-ID"
 	JWT_TYPE_ACCESS_TOKEN  = "access"
 	JWT_TYPE_REFRESH_TOKEN = "refresh"
+	JWT_CONTEXT_KEY        = "jwt_context_key"
 )
 
 // jwt相关

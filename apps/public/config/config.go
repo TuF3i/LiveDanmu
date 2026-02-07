@@ -25,6 +25,12 @@ func LoadDanmuGatewayConfig() (*config_template.DanmuGatewayConfig, error) {
 	}
 	conf.Loki.LokiAddr = addrList
 
+	addrList, err = dns_lookup.ServiceDiscovery(conf.Redis.ServiceName, conf.Redis.Namespace)
+	if err != nil {
+		return nil, err
+	}
+	conf.Redis.Urls = addrList
+
 	return conf, nil
 }
 

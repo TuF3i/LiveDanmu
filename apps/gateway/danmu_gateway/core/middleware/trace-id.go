@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"LiveDanmu/apps/gateway/danmu_gateway"
+	"LiveDanmu/apps/gateway/danmu_gateway/core"
 	"LiveDanmu/apps/public/union_var"
 	"context"
 
@@ -15,7 +15,7 @@ func TraceIDMiddleware() app.HandlerFunc {
 		traceID := c.Request.Header.Get(union_var.X_TRACE_ID_HEADER)
 		// TraceID为空就生成
 		if traceID == "" {
-			traceID := danmu_gateway.SnowFlake.Generate().String()
+			traceID := core.SnowFlake.Generate().String()
 			// 向MataInfo中写入TraceID
 			ctx = metainfo.WithPersistentValue(ctx, union_var.TRACE_ID_KEY, traceID)
 			// 向Context中写入TraceID

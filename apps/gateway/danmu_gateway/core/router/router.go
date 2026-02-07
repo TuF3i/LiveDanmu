@@ -1,7 +1,7 @@
 package router
 
 import (
-	"LiveDanmu/apps/gateway/danmu_gateway"
+	"LiveDanmu/apps/gateway/danmu_gateway/core"
 	"context"
 	"fmt"
 	"time"
@@ -24,13 +24,13 @@ func HertzShutdown() error {
 
 func HertzApi() {
 	// 构造Url
-	url := fmt.Sprintf("%v:%v", danmu_gateway.Config.Hertz.IPAddr, danmu_gateway.Config.Hertz.Port)
+	url := fmt.Sprintf("%v:%v", core.Config.Hertz.IPAddr, core.Config.Hertz.Port)
 	// 创建服务核心
 	h = server.Default(server.WithHostPorts(url))
 	// 初始化路由
 	initRouter(h)
 	// 设置日志内核
-	hlog.SetLogger(danmu_gateway.Logger)
+	hlog.SetLogger(core.Logger)
 	// 启动Hertz引擎
 	go func() { h.Spin() }()
 }

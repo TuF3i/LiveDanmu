@@ -20,6 +20,9 @@ func setDefaultForDanmuGateway(v *viper.Viper) {
 	v.SetDefault(config_template.DANMU_GATEWAY_LOKI_SERVICE, "DANMU_GATEWAY")
 	v.SetDefault(config_template.DANMU_GATEWAY_LOKI_LEVEL, "INFO")
 	v.SetDefault(config_template.DANMU_GATEWAY_LOKI_ENV, "proc")
+	v.SetDefault(config_template.DANMU_GATEWAY_REDIS_SERVICENAME, "redis")
+	v.SetDefault(config_template.DANMU_GATEWAY_REDIS_NAMESPACE, "dao")
+	v.SetDefault(config_template.DANMU_GATEWAY_REDIS_PASSWORD, "")
 }
 
 func DanmuGatewayConfigLoader() (*config_template.DanmuGatewayConfig, error) {

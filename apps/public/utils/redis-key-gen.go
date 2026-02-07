@@ -19,3 +19,11 @@ func GenHotDanmuCounterKey(vid int64) string {
 func GenFullDanmuCounterKey(vid int64) string {
 	return fmt.Sprintf("dm:counter:full:%v", vid)
 }
+
+func GenAccessTokenKey(token string) string {
+	return fmt.Sprintf("auth:token:access:%v", token)
+}
+
+func GenRefreshTokenKey(token string) string {
+	return fmt.Sprintf("auth:token:refresh:%v", token)
+}

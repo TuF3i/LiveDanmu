@@ -1,10 +1,10 @@
 package kafka
 
 import (
-	"LiveDanmu/apps/public/dto"
 	"LiveDanmu/apps/public/models/dao"
 	KMsg "LiveDanmu/apps/public/models/kafka"
 	"LiveDanmu/apps/public/union_var"
+	"LiveDanmu/apps/rpc/danmusvr/core/dto"
 	"LiveDanmu/apps/rpc/danmusvr/kitex_gen/danmusvr"
 	"context"
 	"errors"
