@@ -6,4 +6,5 @@ var (
 	JWTNotRegisteredInRedis = Response{Status: 40002, Info: "JWT Not Registered In Redis"} // JWTNotRegisteredInRedis JWT未注册或已过期
 	ValidateRequestFail     = Response{Status: 40003, Info: "Validate Request Fail"}       // ValidateRequestFail 校验请求失败
 	EmptyRVID               = Response{Status: 40004, Info: "Empty RVID"}                  // EmptyRVID 空RVID
+	YouDoNotHaveAccess      = Response{Status: 40005, Info: "You Do Not Have Access"}      // 你没有权限
 )
