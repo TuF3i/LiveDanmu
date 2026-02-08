@@ -3,9 +3,12 @@ package websocket
 import (
 	"LiveDanmu/apps/gateway/danmu_gateway/core/models"
 	"context"
+	"errors"
+	"sync"
 	"sync/atomic"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/hertz-contrib/websocket"
 )
 
@@ -28,11 +31,13 @@ func (p *Pool) Run(ctx context.Context) {
 		case <-ctx.Done():
 			p.mu.Lock()
 			for _, c := range p.clients {
-				p.unregister <- c
+				c.StopHeartbeat()
+				_ = c.Conn.Close()
 			}
 			close(p.register)
 			close(p.unregister)
 			close(p.broadcast)
+			p.clients = make(map[string]*Client)
 			p.mu.Unlock()
 			return
 		// 注册连接
@@ -50,6 +55,7 @@ func (p *Pool) Run(ctx context.Context) {
 			p.mu.Lock()
 			if _, ok := p.clients[client.ID]; ok {
 				client.StopHeartbeat()
+				_ = client.Conn.Close()
 				delete(p.clients, client.ID)
 				atomic.AddInt32(&p.count, -1)
 			}
@@ -70,6 +76,11 @@ func (p *Pool) Run(ctx context.Context) {
 					continue
 				}
 				go func(c *Client) {
+					defer func() {
+						if r := recover(); r != nil {
+							return
+						}
+					}()
 					// 发送失败则注销
 					for i := 0; i < maxSendRetry; i++ {
 						if c.sendMessage(message) {
@@ -82,6 +93,28 @@ func (p *Pool) Run(ctx context.Context) {
 				}(client)
 			}
 		}
+	}
+}
+
+// RegisterNewClient 注册新连接
+func (p *Pool) RegisterNewClient(conn *websocket.Conn) error {
+	// 组装连接
+	client := &Client{
+		ID:          uuid.New().String(),
+		Conn:        conn,
+		Pool:        p,
+		Metadata:    make(map[string]interface{}),
+		missedPongs: atomic.Int32{},
+		isAlive:     atomic.Bool{},
+		mu:          sync.RWMutex{},
+	}
+	// 向通道发送消息
+	select {
+	case p.register <- client:
+		return nil
+	case <-time.After(registrationWait):
+		_ = conn.Close()
+		return errors.New("registration timeout")
 	}
 }
 
@@ -126,6 +159,9 @@ func (c *Client) heartbeatChecker(ctx context.Context) {
 }
 
 func (c *Client) checkAliveSync() bool {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	// 设置写超时
 	_ = c.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 
@@ -137,6 +173,7 @@ func (c *Client) checkAliveSync() bool {
 	// 等pong
 	select {
 	case <-c.pongReceived:
+		c.missedPongs.Store(0)
 		return true
 	case <-time.After(pongWait):
 		failCount := c.missedPongs.Add(1)
@@ -150,16 +187,35 @@ func (c *Client) checkAliveSync() bool {
 }
 
 func (c *Client) StopHeartbeat() {
+	defer func() {
+		if r := recover(); r != nil {
+			return
+		}
+	}()
+
 	if c.cancelHeart != nil {
 		c.cancelHeart()
+		if c.pongReceived != nil {
+			close(c.pongReceived)
+		}
 	}
 	c.isAlive.Store(false)
 }
 
 // 发消息函数
 func (c *Client) sendMessage(message models.WebsocketMsg) bool {
+	if !c.isAlive.Load() {
+		return false
+	}
+
 	c.mu.Lock()
-	defer c.mu.Unlock()
+	defer func() {
+		if r := recover(); r != nil {
+			c.mu.Unlock()
+			return
+		}
+		c.mu.Unlock()
+	}()
 
 	if !c.isAlive.Load() {
 		return false

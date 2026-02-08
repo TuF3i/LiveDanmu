@@ -12,12 +12,19 @@ import (
 
 // ws设置
 const (
-	pingDelay    = 30 * time.Second
-	pongWait     = 60 * time.Second
-	writeWait    = 10 * time.Second
-	maxFailNum   = 2
-	maxSendRetry = 3
+	pingDelay        = 20 * time.Second
+	pongWait         = 30 * time.Second
+	writeWait        = 10 * time.Second
+	registrationWait = 5 * time.Second
+	maxFailNum       = 2
+	maxSendRetry     = 3
 )
+
+// PoolGroup 连接池组
+type PoolGroup struct {
+	mu    sync.RWMutex
+	Pools map[int64]*Pool
+}
 
 // Pool 连接池结构体
 type Pool struct {
