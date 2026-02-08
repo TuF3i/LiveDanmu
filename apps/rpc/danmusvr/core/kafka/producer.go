@@ -3,6 +3,7 @@ package kafka
 import (
 	"LiveDanmu/apps/public/models/dao"
 	KMsg "LiveDanmu/apps/public/models/kafka"
+	"LiveDanmu/apps/public/response"
 	"LiveDanmu/apps/public/union_var"
 	"LiveDanmu/apps/rpc/danmusvr/core/dto"
 	"LiveDanmu/apps/rpc/danmusvr/kitex_gen/danmusvr"
@@ -55,6 +56,32 @@ func (r *KClient) produceDanmuKMsg(ctx context.Context, data *danmusvr.DanmuMsg,
 	return dto.OperationSuccess
 }
 
+func (r *KClient) produceDelDanmuKMsg(ctx context.Context, msg *danmusvr.DanmuMsg, writer *kafka.Writer) dto.Response {
+	// 生成KMsg
+	source := KMsg.DanmuKMsg{RVID: msg.RoomId, OP: KMsg.DEL_LIVE_DANMU, Data: dao.DanmuData{}}
+	// 序列化Json
+	m, err := jsoniter.ConfigCompatibleWithStandardLibrary.Marshal(source)
+	if err != nil {
+		return dto.ServerInternalError(err)
+	}
+	// 组装弹幕消息
+	kmsg := kafka.Message{
+		Key:   []byte(strconv.FormatInt(source.RVID, 10)),
+		Value: m,
+		Headers: []kafka.Header{
+			{Key: "version", Value: []byte("1.0")},
+			{Key: union_var.TRACE_ID_KEY, Value: []byte(ctx.Value(union_var.TRACE_ID_KEY).(string))},
+		},
+	}
+	// 发送消息
+	err = writer.WriteMessages(ctx, kmsg)
+	if err != nil {
+		return dto.ServerInternalError(err)
+	}
+
+	return dto.OperationSuccess
+}
+
 func (r *KClient) SendVideoDanmuMsg(ctx context.Context, msg *danmusvr.DanmuMsg) dto.Response {
 	resp := r.produceDanmuKMsg(ctx, msg, r.videoDanmuWriter)
 	if !errors.Is(resp, dto.OperationSuccess) {
@@ -66,6 +93,14 @@ func (r *KClient) SendVideoDanmuMsg(ctx context.Context, msg *danmusvr.DanmuMsg)
 func (r *KClient) SendLiveDanmuMsg(ctx context.Context, msg *danmusvr.DanmuMsg) dto.Response {
 	resp := r.produceDanmuKMsg(ctx, msg, r.liveDanmuWriter)
 	if !errors.Is(resp, dto.OperationSuccess) {
+		return resp
+	}
+	return dto.OperationSuccess
+}
+
+func (r *KClient) SendDelLiveDanmuMsg(ctx context.Context, msg *danmusvr.DanmuMsg) dto.Response {
+	resp := r.produceDelDanmuKMsg(ctx, msg, r.boardCastController)
+	if !errors.Is(resp, response.OperationSuccess) {
 		return resp
 	}
 	return dto.OperationSuccess

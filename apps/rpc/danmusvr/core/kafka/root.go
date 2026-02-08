@@ -7,10 +7,11 @@ import (
 )
 
 type KClient struct {
-	liveDanmuWriter  *kafka.Writer
-	videoDanmuWriter *kafka.Writer
-	utilClient       *kafka.Conn
-	conf             *config_template.DanmuRpcConfig
+	liveDanmuWriter     *kafka.Writer
+	videoDanmuWriter    *kafka.Writer
+	boardCastController *kafka.Writer
+	utilClient          *kafka.Conn
+	conf                *config_template.DanmuRpcConfig
 }
 
 func GetKClient(conf *config_template.DanmuRpcConfig) *KClient {

@@ -44,11 +44,26 @@ func (r *KClient) initKafkaClient() {
 		Transport:              dialer,
 	}
 
+	// 集群控制器
 	for _, addr := range r.conf.KafKa.Urls { // 故障轮询
 		conn, err := kafka.Dial("tcp", addr)
 		if err != nil {
 			continue
 		}
 		r.utilClient = conn
+	}
+
+	// 网关广播控制器（删弹幕用的）
+	r.boardCastController = &kafka.Writer{
+		Addr:                   kafka.TCP(r.conf.KafKa.Urls...),
+		Topic:                  kafkaCfg.LIVE_DANMU_BOARDCAST_TOPIC,
+		MaxAttempts:            1, // 重试次数
+		BatchSize:              1,
+		BatchTimeout:           1 * time.Millisecond, // 超时时间
+		RequiredAcks:           1,
+		Async:                  false,
+		Compression:            kafka.Snappy,
+		AllowAutoTopicCreation: true,
+		Transport:              dialer,
 	}
 }

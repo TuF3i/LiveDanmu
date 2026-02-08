@@ -45,3 +45,15 @@ func (s *DanmuSvrImpl) GetTop(ctx context.Context, req *danmusvr.GetTopReq) (res
 	}
 	return dto.GenFinalRespForGetHotDanMu(rawResp, data), nil
 }
+
+// DelLiveDanmu implements the DanmuSvrImpl interface.
+func (s *DanmuSvrImpl) DelLiveDanmu(ctx context.Context, req *danmusvr.DelLiveReq) (resp *danmusvr.DelLiveResp, err error) {
+	// TODO: Your code here...
+	return
+}
+
+// DelDanmu implements the DanmuSvrImpl interface.
+func (s *DanmuSvrImpl) DelDanmu(ctx context.Context, req *danmusvr.DelReq) (resp *danmusvr.DelResp, err error) {
+	// TODO: Your code here...
+	return
+}
