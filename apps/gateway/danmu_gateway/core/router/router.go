@@ -32,6 +32,8 @@ func HertzApi(conf *config_template.DanmuGatewayConfig) {
 	url := fmt.Sprintf("%v:%v", conf.Hertz.ListenAddr, conf.Hertz.ListenPort)
 	// 创建服务核心
 	h = server.Default(server.WithHostPorts(url), server.WithTracer(prometheus.NewServerTracer(conf.Hertz.MonitoringPort, "/hertz")))
+	// 注册TraceID生成中间件
+	h.Use(middleware.TraceIDMiddleware())
 	// 初始化路由
 	initRouter(h)
 	// 设置日志内核

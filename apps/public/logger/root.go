@@ -13,7 +13,7 @@ const (
 	lokiWorkerNum = 3    // 异步推送协程数，建议3-5个
 )
 
-// ------------ Loki 相关结构体定义 ------------
+// LokiConfig ------------ Loki 相关结构体定义 ------------
 // LokiConfig Loki配置项，适配viper/nacos等配置中心（mapstructure标签）
 type LokiConfig struct {
 	ServiceName string

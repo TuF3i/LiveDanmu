@@ -36,7 +36,7 @@ func VideoDanmuConsumerConfigLoader() (*config_template.VideoDanmuConsumerConfig
 	//这样环境变量需要以 DANMU_GATEWAY_ 开头，如 DANMU_GATEWAY_HERTZ_LISTENADDR
 	v.SetEnvPrefix("VIDEO_DANMU_CONSUMER")
 	// 加载默认配置
-	setDefaultForDanmuGateway(v)
+	setDefaultForVideoDanmuConsumer(v)
 	// 加载环境变量
 	v.AutomaticEnv()
 	//设置键名转换器（将环境变量中的 _ 映射到结构体的嵌套字段）
