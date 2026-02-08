@@ -3,6 +3,7 @@ package dao
 import (
 	"LiveDanmu/apps/public/models/dao"
 	"LiveDanmu/apps/rpc/danmusvr/core/dto"
+	"LiveDanmu/apps/rpc/danmusvr/kitex_gen/danmusvr"
 	"context"
 	"errors"
 )
@@ -79,4 +80,33 @@ func (r *Dao) ReadFullDanmu(ctx context.Context, vid int64) ([]dao.DanmuData, dt
 	}
 
 	return data, dto.OperationSuccess
+}
+
+func (r *Dao) DelVideoDanmu(ctx context.Context, msg *danmusvr.DanmuMsg) dto.Response {
+	// 从redis中删除整个key，下次访问时自动补位
+	resp := r.delDanmuInRedis(ctx, msg.RoomId)
+	if !errors.Is(resp, dto.OperationSuccess) {
+		return resp
+	}
+	// 从pgsql中删除弹幕
+	tx := r.pgdb.Begin()
+	ok, resp := r.checkIfDanmuExistOnPgSQL(tx, msg)
+	if !errors.Is(resp, dto.OperationSuccess) {
+		tx.Rollback()
+		return resp
+	}
+	// 字段不存在直接返回
+	if !ok {
+		tx.Commit()
+		return dto.OperationSuccess
+	}
+	// 删除弹幕
+	resp = r.delVideoDanmu(tx, msg)
+	if !errors.Is(resp, dto.OperationSuccess) {
+		tx.Rollback()
+		return resp
+	}
+
+	tx.Commit()
+	return dto.OperationSuccess
 }

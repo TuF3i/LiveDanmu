@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	svr := danmusvr.NewServer(new(handle.DanmuSvrImpl), server.WithMiddleware(middleware.DanmuPoolReleaseMiddleware))
+	svr := danmusvr.NewServer(new(handle.DanmuSvrImpl), server.WithMiddleware(middleware.PreInit), server.WithMiddleware(middleware.DanmuPoolReleaseMiddleware))
 
 	err := svr.Run()
 

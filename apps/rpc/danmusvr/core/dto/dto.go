@@ -63,3 +63,19 @@ func GenFinalRespForPubLiveDanMu(resp Response) *danmusvr.PubLiveResp {
 		Info:   resp.Info,
 	}
 }
+
+// GenFinalRespForDelLiveDanMu 删除直播弹幕
+func GenFinalRespForDelLiveDanMu(resp Response) *danmusvr.DelLiveResp {
+	return &danmusvr.DelLiveResp{
+		Status: int64(resp.Status),
+		Info:   resp.Info,
+	}
+}
+
+// GenFinalRespForDelVideoDanMu 删除视频弹幕
+func GenFinalRespForDelVideoDanMu(resp Response) *danmusvr.DelResp {
+	return &danmusvr.DelResp{
+		Status: int64(resp.Status),
+		Info:   resp.Info,
+	}
+}

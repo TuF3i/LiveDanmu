@@ -181,3 +181,18 @@ func (r *Dao) incrementFullR(ctx context.Context, vid int64) dto.Response {
 
 	return dto.OperationSuccess
 }
+
+func (r *Dao) delDanmuInRedis(ctx context.Context, vid int64) dto.Response {
+	// 生成key
+	keyForFullDanmu := utils.GenFullDanmuKey(vid)
+	keyForHotDanmu := utils.GenHotDanmuKey(vid)
+	// 执行删除
+	pipe := r.rdb.TxPipeline()
+	pipe.Del(ctx, keyForFullDanmu, keyForHotDanmu)
+	_, err := pipe.Exec(ctx)
+	if err != nil {
+		return dto.ServerInternalError(err)
+	}
+
+	return dto.OperationSuccess
+}

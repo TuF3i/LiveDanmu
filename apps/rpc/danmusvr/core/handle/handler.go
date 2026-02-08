@@ -48,12 +48,18 @@ func (s *DanmuSvrImpl) GetTop(ctx context.Context, req *danmusvr.GetTopReq) (res
 
 // DelLiveDanmu implements the DanmuSvrImpl interface.
 func (s *DanmuSvrImpl) DelLiveDanmu(ctx context.Context, req *danmusvr.DelLiveReq) (resp *danmusvr.DelLiveResp, err error) {
-	// TODO: Your code here...
-	return
+	rawResp := DelLiveDanmu(ctx, req)
+	if !errors.Is(rawResp, dto.OperationSuccess) {
+		return dto.GenFinalRespForDelLiveDanMu(rawResp), rawResp
+	}
+	return dto.GenFinalRespForDelLiveDanMu(rawResp), nil
 }
 
 // DelDanmu implements the DanmuSvrImpl interface.
 func (s *DanmuSvrImpl) DelDanmu(ctx context.Context, req *danmusvr.DelReq) (resp *danmusvr.DelResp, err error) {
-	// TODO: Your code here...
-	return
+	rawResp := DelVideoDanmu(ctx, req)
+	if !errors.Is(rawResp, dto.OperationSuccess) {
+		return dto.GenFinalRespForDelVideoDanMu(rawResp), rawResp
+	}
+	return dto.GenFinalRespForDelVideoDanMu(rawResp), nil
 }
