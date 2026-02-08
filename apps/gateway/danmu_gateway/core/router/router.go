@@ -1,14 +1,17 @@
 package router
 
 import (
+	"LiveDanmu/apps/gateway/danmu_gateway/core"
 	"LiveDanmu/apps/gateway/danmu_gateway/core/handler"
 	"LiveDanmu/apps/gateway/danmu_gateway/core/middleware"
 	"LiveDanmu/apps/public/config/config_template"
+	"LiveDanmu/apps/public/logger/adapter"
 	"context"
 	"fmt"
 	"time"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/cloudwego/hertz/pkg/common/hlog"
 	_ "github.com/hertz-contrib/monitor-prometheus"
 	prometheus "github.com/hertz-contrib/monitor-prometheus"
 )
@@ -32,7 +35,7 @@ func HertzApi(conf *config_template.DanmuGatewayConfig) {
 	// 初始化路由
 	initRouter(h)
 	// 设置日志内核
-	//hlog.SetLogger(core.Logger)
+	hlog.SetLogger(adapter.NewHertzZapLogger(core.Logger.Logger))
 	// 启动Hertz引擎
 	go func() { h.Spin() }()
 }

@@ -191,53 +191,53 @@ func initZapWithLoki(config LokiConfig) (*zap.Logger, *lokiHook) {
 }
 
 // ------------ 主函数测试 ------------
-func main() {
-	// 1. 配置Loki（生产可通过viper从yaml/nacos读取）
-	lokiConfig := LokiConfig{
-		LokiAddr: []string{"http://127.0.0.1:3100"}, // 本地Loki地址，确保3100端口可访问
-		Service:  "pay-service",                     // 你的微服务名
-		Env:      "prod",                            // 运行环境
-		Level:    "debug",                           // 日志级别
-	}
-
-	// 2. 初始化Zap+Loki
-	logger, lokiHook := initZapWithLoki(lokiConfig)
-	// 3. 优雅退出：刷新缓冲区+关闭Loki Hook+等待推送完成
-	defer func() {
-		_ = logger.Sync() // 刷新Zap缓冲区
-		lokiHook.Close()  // 关闭Loki Hook，等待所有日志推送完成
-		fmt.Println("program exit gracefully")
-	}()
-
-	// 4. 测试推送不同级别日志（带自定义Field）
-	logger.Debug("用户发起支付请求",
-		zap.String("trace_id", "OTEL-20260204-001"),
-		zap.Int64("user_id", 100001),
-		zap.String("pay_way", "wechat"),
-	)
-
-	logger.Info("支付成功",
-		zap.String("trace_id", "OTEL-20260204-002"),
-		zap.Int64("order_id", 888888),
-		zap.Float64("amount", 199.00),
-		zap.Bool("success", true),
-		zap.Duration("cost", 120*time.Millisecond),
-	)
-
-	logger.Error("支付失败",
-		zap.String("trace_id", "OTEL-20260204-003"),
-		zap.Int64("user_id", 100001),
-		zap.Int64("order_id", 888889),
-		zap.Error(fmt.Errorf("微信支付接口超时，code:408, timeout:5s")),
-	)
-
-	// 测试批量日志（模拟高并发场景）
-	for i := 0; i < 10; i++ {
-		logger.Info("批量支付通知",
-			zap.String("trace_id", fmt.Sprintf("OTEL-20260204-%03d", i+10)),
-			zap.Int("batch_no", i+1),
-			zap.Int("count", 50),
-		)
-	}
-
-}
+//func main() {
+//	// 1. 配置Loki（生产可通过viper从yaml/nacos读取）
+//	lokiConfig := LokiConfig{
+//		LokiAddr: []string{"http://127.0.0.1:3100"}, // 本地Loki地址，确保3100端口可访问
+//		Service:  "pay-service",                     // 你的微服务名
+//		Env:      "prod",                            // 运行环境
+//		Level:    "debug",                           // 日志级别
+//	}
+//
+//	// 2. 初始化Zap+Loki
+//	logger, lokiHook := initZapWithLoki(lokiConfig)
+//	// 3. 优雅退出：刷新缓冲区+关闭Loki Hook+等待推送完成
+//	defer func() {
+//		_ = logger.Sync() // 刷新Zap缓冲区
+//		lokiHook.Close()  // 关闭Loki Hook，等待所有日志推送完成
+//		fmt.Println("program exit gracefully")
+//	}()
+//
+//	// 4. 测试推送不同级别日志（带自定义Field）
+//	logger.Debug("用户发起支付请求",
+//		zap.String("trace_id", "OTEL-20260204-001"),
+//		zap.Int64("user_id", 100001),
+//		zap.String("pay_way", "wechat"),
+//	)
+//
+//	logger.Info("支付成功",
+//		zap.String("trace_id", "OTEL-20260204-002"),
+//		zap.Int64("order_id", 888888),
+//		zap.Float64("amount", 199.00),
+//		zap.Bool("success", true),
+//		zap.Duration("cost", 120*time.Millisecond),
+//	)
+//
+//	logger.Error("支付失败",
+//		zap.String("trace_id", "OTEL-20260204-003"),
+//		zap.Int64("user_id", 100001),
+//		zap.Int64("order_id", 888889),
+//		zap.Error(fmt.Errorf("微信支付接口超时，code:408, timeout:5s")),
+//	)
+//
+//	// 测试批量日志（模拟高并发场景）
+//	for i := 0; i < 10; i++ {
+//		logger.Info("批量支付通知",
+//			zap.String("trace_id", fmt.Sprintf("OTEL-20260204-%03d", i+10)),
+//			zap.Int("batch_no", i+1),
+//			zap.Int("count", 50),
+//		)
+//	}
+//
+//}
